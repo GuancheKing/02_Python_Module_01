@@ -1,8 +1,11 @@
 class Plant:
     """
-    Represents a plant with name, height and age as atributes
+    Represents a plant with name, height and age as attributes
     """
     def __init__(self, name: str, height: int, age: int) -> None:
+        """
+        Initialises a Plant object
+        """
         self.name = name
         self.height = height
         self.age = age
