@@ -79,7 +79,7 @@ class PrizeFlower(FloweringPlant):
 
 class Garden:
     """
-    Represents a garden with different plant types and tracks stats
+    Represents a garden owned by a single person and stores its plants.
     """
     def __init__(self, owner: str) -> None:
         """
@@ -87,6 +87,7 @@ class Garden:
         """
         self.owner = owner
         self.plants = []
+        self.total_growth = 0
 
     def add_plant(self, plant: Plant) -> None:
         """
@@ -102,6 +103,7 @@ class Garden:
         total_growth = 0
         for plant in self.plants:
             total_growth += plant.grow()
+            self.total_growth += plant.grow()
         return total_growth
 
     def plant_info_lines(self) -> list[str]:
@@ -143,8 +145,43 @@ class GardenManager:
         self.gardens[owner].add_plant(plant)
 
     @classmethod
-    def create_garden_network(cls) -> str:
-        return f"Total gardens managed: {cls.total_gardens_created}"
+    def create_garden_network(cls) -> "GardenManager":
+        """
+        Create and return a sample GardenManager instance populated
+        with multiple gardens and plants for demonstration/testing.
+        """
+        manager = cls()
+        oak = Plant("Oak Tree", 100)
+        rose = FloweringPlant("Rose", 25, "red")
+        sunflower = PrizeFlower("Sunflower", 50, "yellow", 10)
+        lily = PrizeFlower("Lily", 45, "yellow", 92)
+        manager.add_plant_to_garden("Alice", oak)
+        manager.add_plant_to_garden("Alice", rose)
+        manager.add_plant_to_garden("Alice", sunflower)
+        manager.add_plant_to_garden("Bob", lily)
+        return manager
+    
+    def report(self, owner: str) -> None:
+        """
+        Print a formatted report for a specific owner's garden,
+        including the plant list and basic statistics.
+        """
+        garden = self.gardens[owner]
+
+        print(f"\n=== {garden.owner}'s Garden Report ===")
+        print("Plants in garden:")
+
+        for line in garden.plant_info_lines():
+            print(line)
+
+        plants_added = len(garden.plants)
+        growth = garden.total_growth
+        print(f"Plants added: {plants_added}, Total growth: {growth}")
+        regular, flowering, prize = (
+            self.GardenStats.plant_types(garden)
+        )
+        print(f"Plant types: {regular} regular, {flowering} flowering"
+              f", {prize} prize flowers")
 
     class GardenStats:
         """
@@ -191,3 +228,8 @@ class GardenManager:
                 else:
                     regular += 1
             return (regular, flowering, prize)
+
+
+if __name__ == "__main__":
+    print("=== Garden Management System Demo ===\n")
+    
