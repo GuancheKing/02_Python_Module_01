@@ -76,6 +76,7 @@ class PrizeFlower(FloweringPlant):
         """
         return (f"{super().info()}, Prize points: {self.prize_points}")
 
+
 class Garden:
     """
     Represents a garden with different plant types and tracks stats
@@ -92,7 +93,7 @@ class Garden:
         Adds a plant to the Garden instance
         """
         self.plants.append(plant)
-    
+
     def grow_all(self) -> int:
         """
         Grows all plants in the Garden and returns
@@ -102,7 +103,7 @@ class Garden:
         for plant in self.plants:
             total_growth += plant.grow()
         return total_growth
-    
+
     def plant_info_lines(self) -> list[str]:
         """
         Generate and return a list of plant information
@@ -113,16 +114,19 @@ class Garden:
             lines.append(p.info())
         return lines
 
+
 class GardenManager:
     """
     Manages several gardens, shows reports and provides analytics tools
     """
+    total_gardens_created = 0
+
     def __init__(self) -> None:
         """
         Initialises an empty garden manager
         """
         self.gardens = {}
-    
+
     def add_garden(self, garden: Garden) -> None:
         """
         Registers an existing Garden instance in the manager
@@ -135,19 +139,55 @@ class GardenManager:
         """
         if owner not in self.gardens:
             self.gardens[owner] = Garden(owner)
+            GardenManager.total_gardens_created += 1
         self.gardens[owner].add_plant(plant)
-        
 
-
-
+    @classmethod
+    def create_garden_network(cls) -> str:
+        return f"Total gardens managed: {cls.total_gardens_created}"
 
     class GardenStats:
         """
-        Nested helper to calculate garden statistics
+        Nested helper to provide static methods for garden validation and stats
         """
         @staticmethod
-        def total_growth(plants) -> int:
+        def validate_heights(gardens: dict[str, Garden]) -> bool:
             """
-            Calculates total growth
+            Return True if all plants across all gardens
+            have a non-negative height
+
+            Args:
+                gardens (dict[str, Garden]): Mapping of owner 
+                names to Garden instances
             """
-            for plant in plant
+            for garden in gardens.values():
+                for plant in garden.plants:
+                    if plant.height < 0:
+                        return False
+            return True
+
+        @staticmethod
+        def plant_types(garden: Garden) -> tuple[int, int, int]:
+            """
+            Count plants by category in a single garden.
+
+            Categories are mutually exclusive with priority:
+            PrizeFlower > FloweringPlant > Plant.
+
+            Args:
+                garden (Garden): Garden instance to analyze.
+
+            Returns:
+                tuple[int, int, int]: (regular, flowering, prize)
+            """
+            prize = 0
+            flowering = 0
+            regular = 0
+            for plant in garden.plants:
+                if isinstance(plant, PrizeFlower):
+                    prize += 1
+                elif isinstance(plant, FloweringPlant):
+                    flowering += 1
+                else:
+                    regular += 1
+            return (regular, flowering, prize)
