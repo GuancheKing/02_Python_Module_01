@@ -50,7 +50,7 @@ class Tree(Plant):
         Estimate and display the tree's shade area.
         """
         shade_area = self.trunk_diameter * self.height * 3.14/1000
-        round_area = round(shade_area)
+        round_area = (int)(shade_area)
         return round_area
 
     def show_info(self) -> None:
@@ -80,8 +80,7 @@ class Vegetable(Plant):
         """
         print(f"{self.name} (Vegetable): {self.height}cm, {self.age} days, "
               f"{self.harvest_season} harvest")
-        print(f"{self.name} is rich in: {self.nutritional_value}")
-        print()
+        print(f"{self.name} is rich in {self.nutritional_value}")
 
 
 if __name__ == "__main__":
